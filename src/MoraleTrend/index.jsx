@@ -60,7 +60,6 @@ const [avgTrend, setAvgTrend] = useState([]);
 
   return (
     <>
-      {console.log(data)}
       <CanvasJSChart options={options} id="morale-trend-container" />
     </>
   );

@@ -1,11 +1,11 @@
-.morale-trend-container div {
-    max-height: 20px !important;
-    /* position: relative; */
-    /* width: 97% !important; */
-    /* top: 10px; */
+.sentiment-trend-container div {
+    max-height: 250px !important;
+    /* position: relative;
+    width: 97% !important;
+    top: 10px; */
 }
 
-.morale-trend-container {
+.sentiment-trend-container {
     margin: 2rem;
 }
 
@@ -19,5 +19,5 @@
     height: 20px;
     margin: 3px;
     padding: 3px;
-    cursor: pointer;
+    overflow: hidden;
 }

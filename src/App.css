@@ -1,0 +1,14 @@
+.emo-progress-label {
+    font-size: 12px;
+    color: #1c1d1f;
+    position: relative;
+    margin:0 5px;
+    /* display:none */
+    /* left: 28px */
+}
+
+.emo-progress-wrapper div div {
+    background-color: #A7E0FF !important;
+    position: relative;
+    justify-content: center !important;
+}

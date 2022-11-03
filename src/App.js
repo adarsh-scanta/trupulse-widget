@@ -1,12 +1,27 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Gauge from "./Gauge";
-import MoraleTrend from "./MoraleTrend"
+import MoraleTrend from "./MoraleTrend";
+import SentimentScore from "./SentimentScore";
+import SentimentTrend from "./SentimentTrend";
+import ProgressBar from "@ramonak/react-progress-bar";
+import "./App.css";
 
 function App({ companyName }) {
   const [token, setToken] = useState("");
   const [moraleScore, setMoraleScore] = useState(0);
-const [moraleTrend, setMoraleTrend] = useState([])
+  const [moraleTrend, setMoraleTrend] = useState([]);
+  const [sentimentsDist, setSentimentsDist] = useState({
+    positive: 0,
+    negative: 0,
+  });
+  const [sentimentTrend, setSentimentTrend] = useState({});
+  const [joy, setJoy] = useState(0);
+  const [anger, setAnger] = useState(0);
+  const [fear, setFear] = useState(0);
+  const [sadness, setSadness] = useState(0);
+  const [surprise, setSurprise] = useState(0);
+
   const login = async () => {
     const loginRes = await axios
       .post("https://webengine.deveast.scanta.io/login", {
@@ -38,7 +53,173 @@ const [moraleTrend, setMoraleTrend] = useState([])
       )
       .catch((res) => {});
     setMoraleScore(moraleRes.data.highMorale);
-    setMoraleTrend(moraleRes.data.moraleScoreAvg)
+    setMoraleTrend(moraleRes.data.moraleScoreAvg);
+  };
+
+  const getSentimentDist = async () => {
+    const sentimentRes = await axios
+      .post(
+        "https://webengine.deveast.scanta.io/getSentimentDistribution",
+        {
+          demography: "Gender",
+          endDate: "",
+          startDate: "",
+          timeOption: "all",
+          workflowID: "overall",
+        },
+        {
+          timeout: 200000,
+          headers: {
+            "Access-Control-Allow-Headers": "x-access-token",
+            "x-access-token": token,
+          },
+        }
+      )
+      .catch((res) => {});
+    setSentimentsDist({
+      positive: sentimentRes.data.percent_positive,
+      negative: sentimentRes.data.percent_negative,
+    });
+  };
+
+  const getSentimentTrend = async () => {
+    const sentimentRes = await axios
+      .post(
+        "https://webengine.deveast.scanta.io/convAnalytics",
+        {
+          demography: "Gender",
+          endDate: "",
+          startDate: "",
+          timeOption: "all",
+          workflowID: "overall",
+        },
+        {
+          timeout: 200000,
+          headers: {
+            "Access-Control-Allow-Headers": "x-access-token",
+            "x-access-token": token,
+          },
+        }
+      )
+      .catch((res) => {});
+    setSentimentTrend(sentimentRes.data);
+  };
+
+  const getEmotions = async () => {
+    const joyRes = await axios
+      .post(
+        "https://webengine.deveast.scanta.io/emotionAnalysis",
+        {
+          channel: "all",
+          demography: null,
+          emotion: "joy",
+          gender: null,
+          term: "",
+          timeOption: "all",
+          workflowID: "overall",
+        },
+        {
+          timeout: 200000,
+          headers: {
+            "Access-Control-Allow-Headers": "x-access-token",
+            "x-access-token": token,
+          },
+        }
+      )
+      .catch((res) => {});
+    setJoy(joyRes.data.emotionPercenatge.Emotion);
+
+    const angerRes = await axios
+      .post(
+        "https://webengine.deveast.scanta.io/emotionAnalysis",
+        {
+          channel: "all",
+          demography: null,
+          emotion: "anger",
+          gender: null,
+          term: "",
+          timeOption: "all",
+          workflowID: "overall",
+        },
+        {
+          timeout: 200000,
+          headers: {
+            "Access-Control-Allow-Headers": "x-access-token",
+            "x-access-token": token,
+          },
+        }
+      )
+      .catch((res) => {});
+    setAnger(angerRes.data.emotionPercenatge.Emotion);
+
+    const fearRes = await axios
+      .post(
+        "https://webengine.deveast.scanta.io/emotionAnalysis",
+        {
+          channel: "all",
+          demography: null,
+          emotion: "fear",
+          gender: null,
+          term: "",
+          timeOption: "all",
+          workflowID: "overall",
+        },
+        {
+          timeout: 200000,
+          headers: {
+            "Access-Control-Allow-Headers": "x-access-token",
+            "x-access-token": token,
+          },
+        }
+      )
+      .catch((res) => {});
+    setFear(fearRes.data.emotionPercenatge.Emotion);
+
+    const sadnessRes = await axios
+      .post(
+        "https://webengine.deveast.scanta.io/emotionAnalysis",
+        {
+          channel: "all",
+          demography: null,
+          emotion: "sad",
+          gender: null,
+          term: "",
+          timeOption: "all",
+          workflowID: "overall",
+        },
+        {
+          timeout: 200000,
+          headers: {
+            "Access-Control-Allow-Headers": "x-access-token",
+            "x-access-token": token,
+          },
+        }
+      )
+      .catch((res) => {});
+    setSadness(sadnessRes.data.emotionPercenatge.Emotion);
+
+    const surpriseRes = await axios
+      .post(
+        "https://webengine.deveast.scanta.io/emotionAnalysis",
+        {
+          channel: "all",
+          demography: null,
+          emotion: "surprise",
+          gender: null,
+          term: "",
+          timeOption: "all",
+          workflowID: "overall",
+        },
+        {
+          timeout: 200000,
+          headers: {
+            "Access-Control-Allow-Headers": "x-access-token",
+            "x-access-token": token,
+          },
+        }
+      )
+      .catch((res) => {});
+    setSurprise(surpriseRes.data.emotionPercenatge.Emotion);
   };
 
   useEffect(() => {
@@ -47,9 +228,24 @@ const [moraleTrend, setMoraleTrend] = useState([])
 
   const handleOpen = () => {
     getMorale();
+    getSentimentDist();
+    getSentimentTrend();
+    getEmotions();
   };
   return (
     <>
+      {console.log(
+        "joy",
+        joy,
+        "anger",
+        anger,
+        "fear",
+        fear,
+        "sadness",
+        sadness,
+        "surprise",
+        surprise
+      )}
       <div>
         <button
           className="block px-10 p-2 shadow-md rounded-md mx-auto"
@@ -105,13 +301,13 @@ const [moraleTrend, setMoraleTrend] = useState([])
               </div>
               <div className="px-6 pt-4 pb-2 space-y-2">
                 <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                  <span className="font-extrabold">Morale</span>
+                  <span className="font-extrabold text-left">Morale</span>
                 </p>
 
                 <Gauge value={moraleScore} />
 
                 <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                  <span className="font-semibold">Trend Line </span>
+                  <span className="font-semibold text-left">Trend Line </span>
                 </p>
                 <div className="max-h-3">
                   <MoraleTrend data={moraleTrend} />
@@ -119,7 +315,9 @@ const [moraleTrend, setMoraleTrend] = useState([])
               </div>
               <div className="px-6 pt-4 pb-4 space-y-2">
                 <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                  <span className="font-extrabold">Trending Topics</span>
+                  <span className="font-extrabold text-left">
+                    Trending Topics
+                  </span>
                 </p>
                 <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
                   appreciation,Compensation, Harrasment, gender equality,
@@ -128,42 +326,77 @@ const [moraleTrend, setMoraleTrend] = useState([])
               </div>
               <div className="px-6 pt-4 pb-4 space-y-2">
                 <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                  <span className="font-extrabold">Sentiments</span>
+                  <span className="font-extrabold text-left">Sentiments</span>
                 </p>
-                <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                  <span className="mr-4">
-                    <span className="font-semibold">Positive: </span>
-                    {"72%"}
-                  </span>
-                  <span className="ml-4">
-                    <span className="font-semibold">Negative: </span>
-                    {"28%"}
-                  </span>
+                <SentimentScore data={sentimentsDist} />
+                <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400 mt-2">
+                  <span className="font-semibold text-left">Trend Line </span>
                 </p>
+                <SentimentTrend data={sentimentTrend} />
               </div>
               <div className="px-6 pt-4 pb-2 space-y-2">
                 <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                  <span className="font-extrabold">Emotion</span>
+                  <span className="font-extrabold">Emotions</span>
                 </p>
                 <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
                   <span className="font-semibold">Joy: </span>
-                  {"42%"}
+                  <span>
+                    <ProgressBar
+                      completed={joy}
+                      className="emo-progress-wrapper"
+                      labelClassName="emo-progress-label"
+                      baseBgColor={"#f6f7fc"}
+                      labelColor={"#6E7C84"}
+                    />
+                  </span>
                 </p>
                 <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
                   <span className="font-semibold">Anger: </span>
-                  {"12%"}
+                  <span>
+                    <ProgressBar
+                      completed={anger}
+                      className="emo-progress-wrapper"
+                      labelClassName="emo-progress-label"
+                      baseBgColor={"#f6f7fc"}
+                      labelColor={"#6E7C84"}
+                    />
+                  </span>
                 </p>
                 <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
                   <span className="font-semibold">Sad: </span>
-                  {"0%"}
+                  <span>
+                    <ProgressBar
+                      completed={sadness}
+                      className="emo-progress-wrapper"
+                      labelClassName="emo-progress-label"
+                      baseBgColor={"#f6f7fc"}
+                      labelColor={"#6E7C84"}
+                    />
+                  </span>
                 </p>
                 <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
                   <span className="font-semibold">Fear: </span>
-                  {"0%"}
+                  <span>
+                    <ProgressBar
+                      completed={fear}
+                      className="emo-progress-wrapper"
+                      labelClassName="emo-progress-label"
+                      baseBgColor={"#f6f7fc"}
+                      labelColor={"#6E7C84"}
+                    />
+                  </span>
                 </p>
                 <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
                   <span className="font-semibold">Surprise: </span>
-                  {"0%"}
+                  <span>
+                    <ProgressBar
+                      completed={surprise}
+                      className="emo-progress-wrapper"
+                      labelClassName="emo-progress-label"
+                      baseBgColor={"#f6f7fc"}
+                      labelColor={"#6E7C84"}
+                    />
+                  </span>
                 </p>
               </div>
 
