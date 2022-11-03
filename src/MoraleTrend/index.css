@@ -1,0 +1,36 @@
+.stroke-gray-200 {
+  stroke: #e5e7eb;
+}
+.stroke-gray-300 {
+  stroke: #d1d5db;
+}
+.font-medium {
+  font-weight: 500;
+}
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+.fill-gray-400 {
+  fill: #9ca3af;
+  color: #9ca3af;
+}
+.fill-blue-400 {
+  fill: #43B5F4;
+  color: #43B5F4;
+}
+.stroke-green-400 {
+  stroke: #43B5F4;
+}
+.text-value {
+  font-size: 22px;
+  font-weight: 600;
+  position:relative;
+  top:-50px;
+  text-align: center;
+}
+.textSection p {
+  text-align: center;
+  padding-bottom: 13px;
+  color: #9ca3af;
+}
